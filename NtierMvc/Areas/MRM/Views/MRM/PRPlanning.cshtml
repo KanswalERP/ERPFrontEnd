@@ -1,0 +1,467 @@
+﻿@model NtierMvc.Model.MRM.PRDetailEntity
+@{
+    ViewBag.Title = "Purchase Requisition";
+}
+
+<div class="row mt-3">
+    <table class="table table-borderless table-sm">
+        <tr>
+            <td>
+                <button id="btnPRPDetails" type="button" class="btn btn-outline-primary btn-sm" ng-click="BindPRDetailsPopup()"><i class="fa fa-plus"></i> <b>PR Details</b></button>
+            </td>
+            <td>
+                <label>Vendor Type</label>
+            </td>
+            <td>
+                <label>Supplier ID</label>
+            </td>
+            <td>
+                <label>RM Category</label>
+            </td>
+            <td>
+                <label>Delivery Date</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                @Html.DropDownList("VendorType", new SelectList(@ViewBag.ListVendorType, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               @id = "PRSearchVendorTypeId",
+                               ng_model = "PRSearchVendorTypeId"
+                           })
+            </td>
+            <td>
+                @Html.DropDownList("SupplierId", new SelectList(@ViewBag.ListSupplierId, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               @id = "PRSearchSupplierId",
+                               ng_model = "PRSearchSupplierId",
+                               @multiple = "true"
+                           })
+            </td>
+            <td>
+                @Html.DropDownList("RMCategory", new SelectList(@ViewBag.ListRMCategory, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               @id = "PRSearchRMCategory",
+                               ng_model = "PRSearchRMCategory",
+                               @multiple = "true"
+                           })
+            </td>
+            <td>
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.TextBox("DeliveryDateFrom", "", new
+                   {
+                       @class = "form-control requiredValidation NoEndDate",
+                       @style = "background-color: white",
+                       @id = "PRSearchDeliveryDateFrom",
+                       ng_model = "PRSearchDeliveryDateFrom",
+                       @placeholder = "Date From",
+                       @readonly = "readonly"
+                   })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBox("DeliveryDateTo", "", new
+                   {
+                       @class = "form-control ml-3 requiredValidation NoEndDate",
+                       @style = "background-color: white",
+                       @id = "PRSearchDeliveryDateTo",
+                       ng_model = "PRSearchDeliveryDateTo",
+                       @placeholder = "Date To",
+                       @readonly = "readonly"
+                   })
+                    </div>
+                </div>
+                
+            </td>
+            <td></td>
+            <td>
+                <button class="btn btn-link" type="button" id="btnSearch" ng-click="FetchPRDetailsList()">
+                    <i class="fa fa-search"></i>
+                </button>
+                <button class="btn btn-sm btn-info" type="button" id="btnClearSearchPR">Clear</button>
+            </td>
+        </tr>
+    </table>
+
+    <div class="row mt-1">
+        <div class="col-md-12">
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div class="container">
+            <table id="TblPRPlanningList">
+                <thead class="tblhead">
+                    <tr>
+                        <th>
+                            Action
+                            <div class="c3">
+                                Action
+                            </div>
+                        </th>
+                        <th>
+                            PR No
+                            <div class="c3">
+                                PR No
+                            </div>
+                        </th>
+                        <th>
+                            PR Date
+                            <div class="c2">
+                                PR Date
+                            </div>
+                        </th>
+                        <th>
+                            Requested by
+                            <div class="c2">
+                                Requested by
+                            </div>
+                        </th>
+                        <th>
+                            Supplier Name
+                            <div class="c2">
+                                Supplier Name
+                            </div>
+                        </th>
+                        <th>
+                            Delivery Date
+                            <div class="c2">
+                                Delivery Date
+                            </div>
+                        </th>
+                        <th>
+                            Total PR Price
+                            <div class="c2">
+                                Total PR Price
+                            </div>
+                        </th>
+                        <th>
+                            Status
+                            <div class="c2">
+                                Status
+                            </div>
+                        </th>
+                        <th>
+                            Download
+                            <div class="c2">
+                                Download
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="L in PRPList">
+                        <td>
+                            <span ng-if="((L.SignStatus =='Entry' || L.SignStatus =='Approved1' || L.SignStatus =='Rejected1' || L.SignStatus =='Approved2' || L.SignStatus =='Rejected2') && L.DeptName != L.LogInDeptName && L.PRStatus != 'Approved')">
+                                <button id="btnViewPRDetails" type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="VIEW" ng-click="LoadPRDetailsViewPopup(L.PRSetno)">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </span>
+                            <span ng-if="L.SignStatus == 'Approved1' && L.DeptName == 'Stores' && L.LogInDeptName == 'Stores'">
+                                <button id="btnEditPRDetails" type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="EDIT" ng-click="LoadPRDetailsEditPopup(L.PRSetno)">
+                                    <i class="fa fa-pen"></i>
+                                </button>
+                            </span>
+                            <span ng-if="L.PRStatus == 'Approved' && L.LogInDeptName == 'Purchase' && L.PurchasePerson==''">
+                                <button id="btnViewPRDetails" type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="VIEW" ng-click="LoadPRDetailsViewPopup(L.PRSetno)">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </span>
+                            <span ng-if="((L.SignStatus =='Entry' || L.SignStatus =='Rejected1' || L.SignStatus =='Rejected2') && (L.DeptName == L.LogInDeptName))">
+                                <button id="btnEditPRDetails" type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="EDIT" ng-click="LoadPRDetailsEditPopup(L.PRSetno)">
+                                    <i class="fa fa-pen"></i>
+                                </button>
+                            </span>
+
+                        </td>
+                        <td>
+                            {{L.PRno}}
+                        </td>
+                        <td>
+                            {{L.PRdate}}
+                        </td>
+                        <td>
+                            {{L.ReqFrom}}
+                        </td>
+                        <td>
+                            {{L.ApprovedSupplier1}}
+                        </td>
+                        <td>
+                            {{L.DeliveryDate}}
+                        </td>
+                        <td>
+                            {{L.TotalPRSetPrice}}
+                        </td>
+                        <td>
+                            {{L.PRStatus}}
+                        </td>
+                        <td>
+                            <button class="btn btn-link btn-sm" value="{{L.PRSetno}}" onclick="CreateDocument(this)">
+                                <img src="~/Images/excel.png" height="30px" />
+                            </button>
+                            @*<button class="btn btn-link btn-sm" value="{{L.PRSetno}}" onclick="CreateDocument(this)">Download</button>*@
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <div class="c1">
+                                <div class="row p-0">
+                                    <div class="col-md-2 p-0">
+                                        <span class="form-group pull-left page-size form-inline">
+                                            <b>Records per page : &nbsp;&nbsp;</b>
+                                            <select id="ddlPRPageSize" class="form-control control-color"
+                                                    ng-model="PRPageSize"
+                                                    ng-change="PRChangePageSize()">
+                                                <option value="100000">All</option>
+                                                <option value="5">5</option>
+                                                <option value="10">10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-8 pull-right p-0">
+                                        <div class="row p-0">
+                                            <div class="col-md-10 p-0">
+                                                <pagination total-items="PRPTotalCount" ng-change="PRPageChanged()" items-per-page="PRPageSize" direction-links="true" ng-model="PRPageIndex" max-size="maxsize" class="pagination pull-right" boundary-links="true" rotate="false" num-pages="PRNumPages"></pagination>
+                                            </div>
+                                            <div class="col-md-2 p-0">
+                                                <a class="btn btn-primary p-2 pull-right">Page: {{PRPageIndex}} / {{PRNumPages}}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="~/Areas/MRM/Scripts/PRDetailPopUp.js?@ViewBag.ReleaseVersion"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        window.FetchPRDetailsList = '@Url.Action("FetchPRDetailsList", "MRM")';
+        window.PRDetailsPopup = '@Url.Action("PRDetailPopup", "MRM")';
+        window.GetPRTableDetails = '@Url.Action("GetPRTableDetails", "MRM")';
+        window.SavePRDetailsList = '@Url.Action("SavePRDetailsList", "MRM")';
+        window.CreateDownloadDocument = '@Url.Action("CreateDownloadDocument", "MRM")';
+        window.GetSuppliers = '@Url.Action("GetSuppliers", "MRM")';
+        window.GetRMCategories = '@Url.Action("GetRMCategories", "MRM")';
+        window.GetDeliveryDates = '@Url.Action("GetDeliveryDates", "MRM")';
+
+        $('#PRSearchVendorTypeId').chosen({
+            width: "210px",
+            placeholder_text_single: "Select Vendor Type Id",
+            placeholder_text_multiple: "Select Vendor Ids"
+        });
+
+
+        $('#PRSearchSupplierId').chosen({
+            width: "210px",
+            placeholder_text_single: "Select Supplier Id",
+            placeholder_text_multiple: "Select Supplier Ids"
+        });
+
+        $('#PRSearchRMCategory').chosen({
+            width: "210px",
+            placeholder_text_single: "Select RMCategory",
+            placeholder_text_multiple: "Select RMCategory"
+        });
+
+        //$('#PRSearchDeliveryDate').chosen({
+        //    width: "210px",
+        //    placeholder_text_single: "Select Delivery Date",
+        //    placeholder_text_multiple: "Select Delivery Date"
+        //});
+
+
+        $("#PRSearchVendorTypeId").chosen().change(
+            function PRGetSupplierIds() {
+                var vendorTypeId = $('#PRSearchVendorTypeId').val();
+
+                return $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'GET',
+                    url: window.GetSuppliers,
+                    data: { VendorTypeId: vendorTypeId },
+                    success: function (res) {
+                        if (res.length > 0) {
+                            $("#PRSearchSupplierId").empty();
+                            $.each(res, function (i, item) {
+                                $("#PRSearchSupplierId").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                                $("#PRSearchSupplierId").trigger("chosen:updated");
+                            })
+                        }
+                    },
+                    error: function () {
+                        alert(result)
+                    }
+                });
+            }
+        );
+
+
+        $('#PRSearchSupplierId').chosen().change(
+            function PRGetPORMCategories() {
+                var SupplierId = '';
+                var x = document.getElementById("PRSearchSupplierId");
+                for (var i = 0; i < x.options.length; i++) {
+                    if (x.options[i].selected == true) {
+                        //alert(x.options[i].value);
+                        SupplierId = SupplierId + x.options[i].value + ',';
+                    }
+                }
+
+                //VendorId = VendorId.slice(0, -1);
+                SupplierId = SupplierId.substring(0, SupplierId.length - 1);
+
+                //var SupplierId = $('#PRSearchSupplierId').val();
+
+                return $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'GET',
+                    url: window.GetRMCategories,
+                    data: { SupplierId: SupplierId },
+                    success: function (res) {
+                        if (res.length > 0) {
+                            $("#PRSearchRMCategory").empty();
+                            $.each(res, function (i, item) {
+                                $("#PRSearchRMCategory").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                                $("#PRSearchRMCategory").trigger("chosen:updated");
+                            })
+                        }
+                    },
+                    error: function (result) {
+                        alert(result)
+                    }
+                });
+            }
+        )
+
+
+        //$('#PRSearchRMCategory').chosen().change(
+        //    function PRGetPODeliveryDates() {
+
+        //        var RMCategory = '';
+        //        var x = document.getElementById("PRSearchRMCategory");
+        //        for (var i = 0; i < x.options.length; i++) {
+        //            if (x.options[i].selected == true) {
+        //                //alert(x.options[i].value);
+        //                RMCategory = RMCategory + x.options[i].value + ',';
+        //            }
+        //        }
+
+        //        //VendorId = VendorId.slice(0, -1);
+        //        RMCategory = RMCategory.substring(0, RMCategory.length - 1);
+
+        //        //var RMCategory = $('#PRSearchRMCategory').val();
+        //        //var RMCategory = $('#PRSearchRMCategory option:selected').text();
+
+        //        return $.ajax({
+        //            contentType: 'application/json; charset=utf-8',
+        //            dataType: 'json',
+        //            type: 'GET',
+        //            url: window.GetDeliveryDates,
+        //            data: { RMCategory: RMCategory },
+        //            success: function (res) {
+        //                if (res.length > 0) {
+        //                    $("#PRSearchDeliveryDate").empty();
+        //                    $.each(res, function (i, item) {
+        //                        $("#PRSearchDeliveryDate").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+        //                        $("#PRSearchDeliveryDate").trigger("chosen:updated");
+        //                    })
+        //                }
+        //            },
+        //            error: function (result) {
+        //                alert(result)
+        //            }
+        //        });
+        //    }
+
+        //)
+
+        $('#btnClearSearchPR').click(
+            function ClearFields() {
+                $('#PRSearchDeliveryDateFrom').val('');
+                $('#PRSearchDeliveryDateTo').val('');
+
+                $('#PRSearchVendorTypeId').val('').trigger('chosen:updated');
+                $('#PRSearchSupplierId').val([]).trigger('chosen:updated');
+                $('#PRSearchRMCategory').val([]).trigger('chosen:updated');
+            }
+        );
+
+    });
+
+    var DeptName = '@ViewBag.DeptName';
+
+    if (DeptName == 'Management' || DeptName == 'Purchase') {
+        $('#btnPRPDetails').hide();
+        $('#btnPRPDetails').attr('disabled',true);
+    }
+    else {
+        $('#btnPRPDetails').show();
+        $('#btnPRPDetails').attr('disabled',false);
+    }
+
+function CreateDocument(e) {
+
+    var PRSetNo = e.value;
+
+    $.ajax({
+        type: 'POST',
+        url: window.CreateDownloadDocument,
+        data: JSON.stringify({ PRSetNo: PRSetNo }),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+
+            if (data.fileName != "") {
+                @*window.location.href = '@Url.RouteUrl(new { Controller = "MRM", Action = "Download" })/?fileName=' + data.fileName;*@
+            }
+            else {
+                alert(data.errorMessage);
+            }
+        },
+        error: function (x, e) {
+            alert(data);
+        }
+    })
+    }
+
+
+    //LEASE DATE AND EXP LEASE DATE VALIDATION
+    $('.NoEndDate').datepicker({
+        format: 'mm-dd-yyyy',
+        autoclose: true,
+        changeMonth: true,
+        changeYear: true,
+        endDate: '',
+        orientation: "bottom"
+    });
+
+    $('.CurrentEndDate').datepicker({
+        format: 'mm-dd-yyyy',
+        autoclose: true,
+        changeMonth: true,
+        changeYear: true,
+        endDate: 'today',
+        orientation: "bottom"
+    });
+
+</script>

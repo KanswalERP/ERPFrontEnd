@@ -1,0 +1,25 @@
+﻿@using NtierMvc.Model
+@using NtierMvc.Infrastructure
+
+<!--Modal Panel-->
+<div id="Panel">
+    <div id="PanelContainer">
+        <div id="PanelBody">
+        </div>
+    </div>
+</div>
+<!--Modal Panel End-->
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        window.SavePayroll = '@Url.Action("SavePayroll", "HR")';
+        $('#ModalPopup').css("display", "none");
+        //$('.redBG').removeClass('redBG').addClass('black');
+        });
+
+</script>
+
+
+

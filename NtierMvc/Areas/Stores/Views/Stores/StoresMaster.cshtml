@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Stores Master";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+<link href="~/assets/css/tableStyle.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+<script src="~/Scripts/tabs.js"></script>
+
+<div ng-controller="StoresController">
+
+    <div class="tab">
+        <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'GoodsRecieptView')">Goods Reciept</button>
+        <button id="StoresOutboundViewLink" class="tablinks" onclick="openCity(event, 'StoresOutboundView')" ng-click="BindPopup()">Outbound</button>
+    </div>
+
+    <div id="GoodsRecieptView" class="tabcontent">
+        @Html.Partial("PartialGoodsReciept")
+    </div>
+
+    <div id="OutboundView" class="tabcontent">
+        @* @Html.Partial("PartialOutboundView")*@
+    </div>
+
+</div>
+
+<script>
+    document.getElementById("defaultOpen").click();
+
+    $(document).ready(function () {
+        window.GRPopup = '@Url.Action("GRPopup", "Stores", new { Area = "Stores"})';
+        window.FetchGoodsRecieptList = '@Url.Action("FetchGoodsRecieptList", "Stores")';
+    });
+
+    window.onload = function () {
+        angular.element(document.getElementById('TblGoodsRecieptList')).scope().FetchGoodsRecieptList();
+    }
+
+    //$timeout($scope.FetchGoodsRecieptList);
+</script>

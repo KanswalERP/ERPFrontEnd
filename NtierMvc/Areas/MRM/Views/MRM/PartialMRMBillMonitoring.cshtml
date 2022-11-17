@@ -1,0 +1,366 @@
+﻿@model NtierMvc.Model.GateEntryEntity
+@{
+    ViewBag.Title = "Bill Monitoring";
+}
+
+<div class="row mt-3">
+    <div class="col-md-1">
+        <button id="btnBill" type="button" class="btn btn-outline-primary btn-sm" style="float: left;" ng-click="MRMBindVendorsMasterBillPopUp()"><i class="fa fa-plus"></i><b> Add Bill</b></button>
+    </div>
+    <div class="col-md-10">
+        <div class="row">
+            <table>
+                <tr>
+                    <td>
+                        <label>Vendor Type</label>
+                    </td>
+                    <td>
+                        <label>Supplier ID</label>
+                    </td>
+                    <td>
+                        <label>Supplier Name</label>
+                    </td>
+                    <td>
+                        <label>Approved Date</label>
+                    </td>
+                    <td>
+                        <label>Amount</label>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DropDownList("VendorType", new SelectList(@ViewBag.ListVendorType, "DataStringValueField", "DataTextField", "Select"),
+                                new
+                                {
+                                    @class = "form-control",
+                                    @id = "MRMSearchVendorTypeId",
+                                    ng_model = "MRMSearchVendorTypeId"
+                                })
+                    </td>
+                    <td>
+                        @Html.DropDownList("SupplierId", new SelectList(@ViewBag.ListSupplierId, "DataStringValueField", "DataTextField", "Select"),
+                                   new
+                                   {
+                                       @class = "form-control",
+                                       @id = "MRMSearchSupplierId",
+                                       ng_model = "MRMSearchSupplierId",
+                                       @multiple = "true"
+                                   })
+                    </td>
+                    <td>
+                        @Html.DropDownList("SupplierName", new SelectList(@ViewBag.ListSupplierName, "DataStringValueField", "DataTextField", "Select"),
+                                   new
+                                   {
+                                       @class = "form-control",
+                                       @id = "MRMSearchSupplierName",
+                                       ng_model = "MRMSearchSupplierName",
+                                       @multiple = "true"
+                                   })
+                    </td>
+                    <td>
+                        @Html.DropDownList("ApprovedDate", new SelectList(@ViewBag.ListDeliveryDate, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               @id = "MRMSearchApprovedDate",
+                               ng_model = "MRMSearchApprovedDate",
+                               @multiple = "true"
+                           })
+                    </td>
+                    <td>
+                        @Html.DropDownList("TotalAmount", new SelectList(@ViewBag.ListTotalAmount, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               @id = "MRMSearchTotalAmount",
+                               ng_model = "MRMSearchTotalAmount",
+                               @multiple = "true"
+                           })
+
+                    </td>
+                    <td>
+                        <button class="btn btn-link" type="button" id="btnSearch" ng-click="FetchVendorsMasterList()">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button class="btn btn-sm btn-info" type="button" id="btnClearSearchBM">Clear</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper">
+    <div class="container">
+        <table class="text-center">
+            <thead class="tblhead">
+                <tr>
+                    <th>
+                        Action
+                        <div class="c1">
+                            Action
+                        </div>
+                    </th>
+                    <th>
+                        Supply Type
+                        <div class="c2">
+                            Supply Type
+                        </div>
+                    </th>
+                    <th>
+                        GateControlNo
+                        <div class="c2">
+                            GateControlNo
+                        </div>
+                    </th>
+                    <th>
+                        Vendor Name
+                        <div class="c2">
+                            Vendor Name
+                        </div>
+                    </th>
+                    <th>
+                        Supplier Inv No
+                        <div class="c2">
+                            Supplier Inv No
+                        </div>
+                    </th>
+                    <th>
+                        Supplier Inv Date
+                        <div class="c2">
+                            Supplier Inv Date
+                        </div>
+                    </th>
+                    <th>
+                        GR No
+                        <div class="c3">
+                            GR No
+                        </div>
+                    </th>
+                    <th>
+                        GR Date
+                        <div class="c3">
+                            GR Date
+                        </div>
+                    </th>                    
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="L in BOMList">
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="VIEW" ng-click="LoadBillMonitoringViewPopup(L.BMno)">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="EDIT" ng-click="LoadBillMonitoringEditPopup(L.BMno)">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                    </td>
+                    <td>
+                        {{L.SupplyType}}
+                    </td>
+                    <td>
+                        {{L.GateControlNo}}
+                    </td>
+                    <td>
+                        {{L.VendorName}}
+                    </td>
+                    <td>
+                        {{L.SupplierInvNo}}
+                    </td>
+                    <td>
+                        {{L.SupplierInvDate}}
+                    </td>
+                    <td>
+                        {{L.GRNo}}
+                    </td>
+                    <td>
+                        {{L.GRDate}}
+                    </td>
+                    
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <div class="c1">
+                            <div class="row p-0">
+                                <div class="col-md-2 p-0">
+                                    <span class="form-group pull-left page-size form-inline">
+                                        <b>Records per page : &nbsp;&nbsp;</b>
+                                        <select id="ddlBMPageSize" class="form-control control-color"
+                                                ng-model="BMPageSize"
+                                                ng-change="BMChangePageSize()">
+                                            <option value="100000">All</option>
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="col-md-8 pull-right p-0">
+                                    <div class="row p-0">
+                                        <div class="col-md-10 p-0">
+                                            <pagination total-items="BMTotalCount" ng-change="BMPageChanged()" items-per-page="BMPageSize" direction-links="true" ng-model="BMPageIndex" max-size="maxsize" class="pagination pull-right" boundary-links="true" rotate="false" num-pages="BMNumPages"></pagination>
+                                        </div>
+                                        <div class="col-md-2 p-0">
+                                            <a class="btn btn-primary p-2 pull-right">Page: {{BMPageIndex}} / {{BMNumPages}}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        window.MRMBillMonitoringPopUp = '@Url.Action("MRMBillMonitoringPopUp", "MRM")';
+        window.GetDdlDetailsForList = '@Url.Action("GetDdlDetailsForList", "GateEntry", new { @Area = ""})';
+        window.FetchBillMonitoringList = '@Url.Action("FetchBillMonitoringList", "MRM")';
+        window.MRMGateControlNoDetails = '@Url.Action("GetMRMDetailForGateControlNo", "MRM")';
+        window.GetSuppliers = '@Url.Action("GetSuppliers", "MRM")';
+        window.GetSupplierName = '@Url.Action("GetSupplierName", "MRM")';
+        window.GetApprovedDate = '@Url.Action("GetApprovedDate", "MRM")';
+
+    });
+
+    $('#MRMSearchVendorTypeId').chosen({
+        width: "210px",
+        placeholder_text_single: "Select Vendor Type Id",
+        placeholder_text_multiple: "Select Vendor Type Id"
+    });
+
+    $('#MRMSearchSupplierId').chosen({
+        width: "210px",
+        placeholder_text_single: "Select Supplier Id",
+        placeholder_text_multiple: "Select Supplier Ids"
+    });
+
+    $('#MRMSearchSupplierName').chosen({
+        width: "210px",
+        placeholder_text_single: "Select Supplier Name",
+        placeholder_text_multiple: "Select Supplier Name"
+    });
+
+    $('#MRMSearchApprovedDate').chosen({
+        width: "210px",
+        placeholder_text_single: "Select Approved Date",
+        placeholder_text_multiple: "Select Approved Date"
+    });
+
+    $('#MRMSearchTotalAmount').chosen({
+        width: "210px",
+        placeholder_text_single: "Select Total Amount",
+        placeholder_text_multiple: "Select Total Amount"
+    });
+
+
+    $("#MRMSearchVendorTypeId").chosen().change(
+        function MRMGetSupplierIds() {
+            var vendorTypeId = $('#MRMSearchVendorTypeId').val();
+
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'GET',
+                url: window.GetSuppliers,
+                data: { VendorTypeId: vendorTypeId },
+                success: function (res) {
+                    if (res.length > 0) {
+                        $("#MRMSearchSupplierId").empty();
+                        $.each(res, function (i, item) {
+                            $("#MRMSearchSupplierId").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                            $("#MRMSearchSupplierId").trigger("chosen:updated");
+                        })
+                    }
+                },
+                error: function () {
+                    alert(result)
+                }
+            });
+        }
+    );
+
+
+    $('#MRMSearchSupplierId').chosen().change(
+        function MRMGetSupplierNameAndDate() {
+            var SupplierId = '';
+            var x = document.getElementById("MRMSearchSupplierId");
+            for (var i = 0; i < x.options.length; i++) {
+                if (x.options[i].selected == true) {
+                    //alert(x.options[i].value);
+                    SupplierId = SupplierId + x.options[i].value + ',';
+                }
+            }
+
+            SupplierId = SupplierId.substring(0, SupplierId.length - 1);
+
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'GET',
+                url: window.GetSupplierName,
+                data: { SupplierId: SupplierId },
+                success: function (res) {
+                    if (res.length > 0) {
+                        $("#MRMSearchSupplierName").empty();
+                        $.each(res, function (i, item) {
+                            $("#MRMSearchSupplierName").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                            $("#MRMSearchSupplierName").trigger("chosen:updated");
+                        })
+                    }
+                },
+                error: function (result) {
+                    alert(result)
+                }
+            });
+
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'GET',
+                url: window.GetApprovedDate,
+                data: { SupplierId: SupplierId },
+                success: function (res) {
+                    if (res.length > 0) {
+                        $("#MRMSearchApprovedDate").empty();
+                        $.each(res, function (i, item) {
+                            $("#MRMSearchApprovedDate").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                            $("#MRMSearchApprovedDate").trigger("chosen:updated");
+                        })
+                    }
+                },
+                error: function (result) {
+                    alert(result)
+                }
+            });
+
+
+        }
+    )
+
+
+
+    $('#btnClearSearchBM').click(
+        function ClearFields() {
+            
+            $('#MRMSearchVendorTypeId').val('').trigger('chosen:updated');
+            $('#MRMSearchSupplierId').val([]).trigger('chosen:updated');
+            $('#MRMSearchSupplierName').val([]).trigger('chosen:updated');
+            $('#MRMSearchApprovedDate').val([]).trigger('chosen:updated');
+            $('#MRMSearchTotalAmount').val([]).trigger('chosen:updated');
+        }
+    );
+
+</script>
+
+<script src="~/Areas/MRM/Scripts/MRMBillMonitoring.js?@ViewBag.ReleaseVersion"></script>
+

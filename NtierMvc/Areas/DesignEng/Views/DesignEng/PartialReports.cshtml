@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Technical";
+}
+
+<div class="row mt-1">
+    <div class="col-md-12">
+
+    </div>
+</div>
+
+
+<!--Modal Panel-->
+<div id="ReportsPanel">
+    <div id="ReportsPanelContainer">
+        <div id="ReportsPanelBody">
+        </div>
+    </div>
+</div>
+<!--Modal Panel End-->
+
+<script>
+    $(document).ready(function () {
+        window.ReportsPopup = '@Url.Action("ReportsPopup", "DesignEng", new {@Area = "DesignEng" })';
+    })
+</script>

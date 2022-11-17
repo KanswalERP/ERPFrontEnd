@@ -1,0 +1,81 @@
+﻿@using NtierMvc.Infrastructure
+@{
+    ViewBag.Title = "CRM Master";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+<link href="~/assets/css/tableStyle.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+<script src="~/Scripts/tabs.js"></script>
+
+<div ng-controller="MainController">
+    <div class="tab">
+        @if (LocalUtility.CheckUrlForPermission("", "CRM", "CRMMaster", "Customer"))
+        {
+            <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'CustomerPartialView')" ng-click="DefaultCustomerList(); FetchCustomerList();">Customer</button>
+        }
+        @if (LocalUtility.CheckUrlForPermission("", "CRM", "CRMMaster", "Enquiry"))
+        {
+            <button id="EnquiryViewLink" class="tablinks" onclick="openCity(event, 'EnquiryPartialView')" ng-click="DefaultEnquiryList(); FetchEnquiryList();">Enquiry</button>
+        }
+        @if (LocalUtility.CheckUrlForPermission("", "CRM", "CRMMaster", "Quotation"))
+        {
+            <button id="QuotationViewLink" class="tablinks" onclick="openCity(event, 'QuotationPartialView')" ng-click="DefaultQuotationList(); FetchQuotationList();">Quotation</button>
+        }
+        @if (LocalUtility.CheckUrlForPermission("", "CRM", "CRMMaster", "Order"))
+        {
+            <button id="OrdersViewLink" class="tablinks" onclick="openCity(event, 'OrdersPartialView')" ng-click="DefaultOrdersList(); FetchOrdersList();">Order</button>
+        }
+        
+            <button id="ReportPartialViewLink" class="tablinks" onclick="openCity(event, 'ReportPartialView')" ng-click="BindReportPopup()" > Other API Reports</button>
+        
+    </div>
+
+    <div id="CustomerPartialView" class="tabcontent">
+        @Html.Partial("PartialCustomer")
+    </div>
+    <!-- Tab content -->
+
+    <div id="EnquiryPartialView" class="tabcontent">
+        @Html.Partial("../Technical/EnquiryView")
+    </div>
+
+    <div id="QuotationPartialView" class="tabcontent">
+        @Html.Partial("../Technical/PartialQuoteRegView")
+    </div>
+
+    <div id="OrdersPartialView" class="tabcontent">
+        @Html.Partial("../Technical/PartialOrderViewOnly")
+    </div>
+    <div id="ReportPartialView" class="tabcontent">
+        @Html.Partial("PartialReportView")
+    </div>
+</div>
+
+<script>
+        document.getElementById("defaultOpen").click();
+
+    $(document).ready(function () {
+
+        window.SaveCustomer = '@Url.Action("SaveCustomerDetails", "CRM")';
+        window.StateDetail = '@Url.Action("GetStateDetail", "CRM")';
+
+        window.OtherDetailsPopup = '@Url.Action("CustomerPopup", "CRM")';
+        window.CustomerWithSearch = '@Url.Action("CustomerWithSearch", "CRM")';
+        window.FetchCustomerList = '@Url.Action("FetchCustomerList", "CRM")';
+        window.DeleteCustomerDetail = '@Url.Action("DeleteCustomerDetail", "CRM")';
+
+        window.EnquiryDetailsPopup = '@Url.Action("EnquiryPopup", "Technical")';
+        window.FetchEnquiryList = '@Url.Action("FetchEnquiryList", "Technical")';
+        window.DeleteEnquiryDetail = '@Url.Action("DeleteEnquiryDetail", "Technical")';
+
+        window.QuotationDetailsPopup = '@Url.Action("QuotationPopup", "Technical")';
+        window.RevisedQuotationDetailsPopup = '@Url.Action("RevisedQuotationPopup", "Technical")';
+        window.GetPrepQuoteNo = '@Url.Action("GetPrepQuoteNo", "Technical")';
+        window.FetchQuotationList = '@Url.Action("FetchQuotationList", "Technical")';
+        window.FetchOrdersList = '@Url.Action("FetchOrdersList", "Technical")';
+
+        window.ReportsPopUp = '@Url.Action("PartialReportView", "CRM")';
+    })
+
+</script>

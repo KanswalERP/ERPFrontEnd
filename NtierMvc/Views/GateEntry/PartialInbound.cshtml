@@ -1,0 +1,193 @@
+﻿@model NtierMvc.Model.GateEntryEntity
+@{
+    ViewBag.Title = "Inbound";
+}
+
+<div class="row mt-3">
+    <div class="col-md-2">
+        <button id="btnBill" type="button" class="btn btn-outline-primary btn-sm" style="float: left;" ng-click="BindInboundPopUp()"><i class="fa fa-plus"></i><b> Add Gate Entry</b></button>
+    </div>
+    <div class="col-md-10">
+        <div class="row">
+            <table>
+                <tr>
+                    <td>Type</td>
+                    <td>Vendor Nature</td>
+                    <td>Vendor Name</td>
+                    <td>PO No</td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DropDownList("Type", new SelectList(@ViewBag.ListSupplyType, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               ng_model = "SearchType",
+                               @id = "TypeList",
+                               @onchange = "getDdlDetailsForList('TypeList')"
+                           })
+                    </td>
+                    <td>
+                        @Html.DropDownList("VendorNature", new SelectList(@ViewBag.ListVendorNature, "DataStringValueField", "DataTextField", "Select"),
+                                                   new
+                                                   {
+                                                       @class = "form-control",
+                                                       ng_model = "SearchVendorNature",
+                                                       @id = "INBVendorNatureList",
+                                                       @onchange = "getDdlDetailsForList('VendorNatureList')"
+                                                   })
+                    </td>
+                    <td>
+                        @Html.DropDownList("VendorName", new SelectList(@ViewBag.ListVendorName, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               ng_model = "SearchVendorName",
+                               @id = "INBVendorNameList",
+                               @onchange = "getDdlDetailsForList('VendorNameList')"
+                           })
+                    </td>
+                    <td>
+                        @Html.DropDownList("PONo", new SelectList(@ViewBag.ListPONo, "DataStringValueField", "DataTextField", "Select"),
+                                                   new
+                                                   {
+                                                       @class = "form-control",
+                                                       ng_model = "SearchPONo",
+                                                       @id = "INBPONoList"
+                                                   })
+                    </td>
+                    <td>
+                        <button class="btn btn-link" type="button" id="btnSearch" ng-click="FetchInboundList()">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper">
+    <div class="container">
+        <table id="TblGateEntryList">
+            <thead class="tblhead">
+                <tr>
+                    <th>
+                        Action
+                        <div class="c1">
+                            Action
+                        </div>
+                    </th>
+                    <th>
+                        Type
+                        <div class="c2">
+                            Type
+                        </div>
+                    </th>
+                    <th>
+                        Gate Control No
+                        <div class="c2">
+                            Gate Control No
+                        </div>
+                    </th>
+                    <th>
+                        Vehicle No
+                        <div class="c2">
+                            Vehicle No
+                        </div>
+                    </th>                    
+                    <th>
+                        Time In Date Time
+                        <div class="c2">
+                            Time In Date Time
+                        </div>
+                    </th>
+                    <th>
+                        Time Out Date Time
+                        <div class="c2">
+                            Time Out Date Time
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="L in InboundList">
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="VIEW" ng-click="LoadInboundViewPopup(L.GateNo)">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <div ng-if="L.TimeIn && !L.TimeOut">
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="EDIT" ng-click="LoadInboundEditPopup(L.GateNo)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                        </div>
+
+                    </td>
+                    <td>
+                        {{L.SupplyType}}
+                    </td>
+                    <td>
+                        {{L.GateControlNo}}
+                    </td>
+                    <td>
+                        {{L.VehicleNo}}
+                    </td>
+                    <td>
+                        {{L.TimeInDate}}
+                    </td>
+                    <td>
+                        {{L.TimeOutDate}}
+                    </td>
+                    
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <div class="c1">
+                            <div class="row p-0">
+                                <div class="col-md-2 p-0">
+                                    <span class="form-group pull-left page-size form-inline">
+                                        <b>Records per page : &nbsp;&nbsp;</b>
+                                        <select id="ddlINBPageSize" class="form-control control-color"
+                                                ng-model="INBPageSize"
+                                                ng-change="INBChangePageSize()">
+                                            <option value="100000">All</option>
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="col-md-8 pull-right p-0">
+                                    <div class="row p-0">
+                                        <div class="col-md-10 p-0">
+                                            <pagination total-items="INBTotalCount" ng-change="INBPageChanged()" items-per-page="INBPageSize" direction-links="true" ng-model="INBPageIndex" max-size="maxsize" class="pagination pull-right" boundary-links="true" rotate="false" num-pages="INBNumPages"></pagination>
+                                        </div>
+                                        <div class="col-md-2 p-0">
+                                            <a class="btn btn-primary p-2 pull-right">Page: {{INBPageIndex}} / {{INBNumPages}}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        window.InboundPopUp = '@Url.Action("InboundPopUp", "GateEntry")';
+        window.GetDdlDetailsForInboundList = '@Url.Action("GetDdlDetailsForList", "GateEntry")';
+        window.GetPOTableDetailsForGateEntry = '@Url.Action("GetPOTableDetailsForGateEntry", "GateEntry")';
+    });
+
+
+</script>
+<script src="~/Scripts/CustomJS/Inbound.js?@ViewBag.ReleaseVersion"></script>

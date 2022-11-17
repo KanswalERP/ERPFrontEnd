@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "Gate Entry Master";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+<link href="~/assets/css/tableStyle.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+<script src="~/Scripts/tabs.js"></script>
+
+<div ng-controller="MainController">
+
+    <div class="tab">
+        <button id="defaultOpen" class="tablinks" onclick="openCity(event, 'InboundView')" >Inbound</button>
+        <button id="OutboundViewLink" class="tablinks" onclick="openCity(event, 'OutboundView')">Outbound</button>
+    </div>
+
+    <div id="InboundView" class="tabcontent">
+        @Html.Partial("PartialInbound")
+    </div>
+
+    <div id="OutboundView" class="tabcontent">
+        @* @Html.Partial("PartialOutboundView")*@
+    </div>
+
+</div>
+
+<script>
+    document.getElementById("defaultOpen").click();
+
+    $(document).ready(function () {
+        
+        //window.QuotePrepPopup = '@Url.Action("PartialQuotePrep", "Technical")';
+
+    });
+
+    window.onload = function () {
+        angular.element(document.getElementById('TblGateEntryList')).scope().FetchInboundList();
+    }
+</script>

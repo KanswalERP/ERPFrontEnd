@@ -1,0 +1,789 @@
+﻿@model NtierMvc.Model.MRM.PODetailEntity
+@{
+    ViewBag.Title = "PO Details";
+}
+
+<input type="text" id="tableSelected" hidden />
+<input type="text" id="HiddenLoggedInDeptName" hidden />
+@Html.HiddenFor(m => m.DeptName, new { @id = "HiddenDeptNamePODetails" })
+@Html.HiddenFor(m => m.PRSetno, new { @id = "HiddenPRSetno" })
+@Html.HiddenFor(m => m.POSetno, new { @id = "HiddenPOSetno" })
+@Html.HiddenFor(m => m.SignStatus, new { @id = "HiddenSignStatusPODetails" })
+@Html.HiddenFor(m => m.PRStatus, new { @id = "HiddenPRStatusPODetails" })
+@*@Html.HiddenFor(m => m.EntryPerson, new { @id = "HiddenEntryPersonPODetails" })*@
+@Html.HiddenFor(m => m.ApprovePerson1, new { @id = "HiddenApprovePerson1PODetails" })
+@Html.HiddenFor(m => m.ApprovePerson2, new { @id = "HiddenApprovePerson2PODetails" })
+
+<div class="row">
+    <div class="col-md-3">
+
+    </div>
+    <div class="col-md-1 ml-auto pr-2 text-right">
+        <img src="~/Images/Common/@ViewBag.Logo" alt="Company Logo" />
+    </div>
+    <div class="col-md-7 p-0 pt-2">
+        <h3>@ViewBag.CompanyName</h3>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-1">
+                        Address:
+                    </div>
+                    <div class="col-md-10">
+                        @ViewBag.Address1
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+
+                    </div>
+                    <div class="col-md-10">
+                        @ViewBag.Address2
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+
+                    </div>
+                    <div class="col-md-10">
+                        @ViewBag.Address3
+                    </div>
+                </div>
+                @if (ViewBag.Phone != null)
+                {
+                    <div class="row">
+                        <div class="col-md-1">
+                            Phone:
+                        </div>
+                        <div class="col-md-10">
+                            @ViewBag.Phone
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-md-1">
+                        Mobile:
+                    </div>
+                    <div class="col-md-10">
+                        @ViewBag.Mobile
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        Email:
+                    </div>
+                    <div class="col-md-10">
+                        @ViewBag.Email1
+                    </div>
+                </div>
+                @if (ViewBag.Email2 != null)
+                {
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-10">
+                            @ViewBag.Email2
+                        </div>
+                    </div>
+                }
+                @if (ViewBag.Email3 != null)
+                {
+                    <div class="row">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-10">
+                            @ViewBag.Email3
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-1">
+                        Website:
+                    </div>
+                    <div class="col-md-10">
+                        @ViewBag.Website
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div ng-controller="MRMController" class="row">
+    <form id="formPODetails" class="mt-5">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-inline pull-left">
+                        <div class="form-group">
+                            <label for="PRNo">PR No </label>
+                            @Html.DropDownListFor(m => m.PRSetno, new SelectList(@ViewBag.ListPRno, "DataStringValueField", "DataTextField", "Select"), new
+                                {
+                                    @class = "form-control ml-2 requiredValidation",
+                                    @id = "PRSetNoPODetails",
+                                    @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)",
+                                    @onchange = "FetchtPRDetailsFromPRSetNo()"
+                                })
+                        </div>
+                        <div class="form-group ml-4">
+                            <label for="PRcat">PR Cat </label>
+                            @Html.DropDownListFor(m => m.PRcat, new SelectList(@ViewBag.ListPRCat, "DataStringValueField", "DataTextField", Model.PRcat),
+                            new
+                            {
+                                @class = "form-control requiredValidation",
+                                @id = "POCatPRDetails",
+                                @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)",
+                                @onchange = "RadioListChange()"
+                            })
+                        </div>
+                        <div class="form-group ml-4">
+                            <label for="SupplyTerms">Supply Terms </label>
+                            @Html.DropDownListFor(m => m.SupplyTerms, new SelectList(ViewBag.ListSupplyTerms, "DataStringValueField", "DataTextField", "Select"), new
+                                      {
+                                          @class = "form-control requiredValidation",
+                                          @id = "SupplyTermsPODetails",
+                                          @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)",
+                                          @onchange = "changeLotTable()"
+                                      })
+                        </div>
+                        <div class="form-group ml-4">
+                            <label for="PONo">PO No </label>
+                            @Html.TextBoxFor(m => m.PONo, new
+                       {
+                           @class = "form-control ml-3 mr-2 requiredValidation",
+                           @id = "PONoPODetails",
+                           @readonly = "readonly",
+                           @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                       })
+                        </div>
+                        <div class="form-group ml-4">
+                            <label for="PODate">PO Date </label>
+                            @Html.TextBoxFor(m => m.POdate, new
+                       {
+                           @class = "form-control ml-3 requiredValidation",
+                           @id = "PODatePODetails",
+                           @readonly = "readonly",
+                           @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                       })
+                        </div>
+                        <div class="form-group ml-4">
+                            <label for="PORevNo">PO Revise No </label>
+                                @Html.DropDownListFor(m => m.PORevNo, new SelectList(@ViewBag.ListPORevNo, "DataStringValueField", "DataTextField", "Select"), new
+                                        {
+                                            @class = "form-control ml-2",
+                                            @id = "PORevNoPODetails"
+                                        })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*<div id="lotDiv" class="row">
+                    <div class="col-md-12"><a href="#" id="addNew" class="btn btn-info btn-sm mb-2 mt-4">Add Lot Details</a></div>
+                    <table id="lotTable" class="table table-responsive table-hover">
+                        <thead>
+                            <tr class="bg-cyan">
+                                <th>SN</th>
+                                <th>Lot Name</th>
+                                <th>Lot Date</th>
+                                <th>Lot Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input name="SN" type="text" class="form-control forSingle" />
+                                    <span class="HideValidMsg"> SN</span>
+                                </td>
+                                <td>
+                                    <select name="LotName" class="form-control">
+                                        <option value="Lot1">Lot 1</option>
+                                        <option value="Lot2">Lot 2</option>
+                                        <option value="Lot3">Lot 3</option>
+                                    </select>
+                                    <span class="HideValidMsg"> Enter Lot Name</span>
+                                </td>
+                                <td>
+                                    <input name="LotDate" type="text" class="form-control NoEndDate forSingle" readonly="readonly" autocomplete="off" />
+                                    <span class="HideValidMsg"> Enter Lot Date</span>
+                                </td>
+                                <td>
+                                    <input name="LotQty" type="text" class="form-control forSingle" />
+                                    <span class="HideValidMsg"> Enter Lot Qty</span>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>*@
+
+            <div class="row">
+                <hr style="width:100%" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered tableRadio" id="tableRM">
+                        <thead>
+                            <tr>
+                                <td style="width: 5%;">
+                                    SN
+                                </td>
+                                <td width="25%">
+                                    RM Description
+                                </td>
+                                <td hidden>
+                                    RM Grade
+                                </td>
+                                <td hidden>
+                                    RM Hardness
+                                </td>
+                                <td hidden>
+                                    PSL Level
+                                </td>
+                                <td hidden>
+                                    OD
+                                </td>
+                                <td hidden>
+                                    WT
+                                </td>
+                                <td hidden>
+                                    Len
+                                </td>
+                                <td hidden>
+                                    Qty Required (Nos)
+                                </td>
+                                <td hidden>
+                                    Qty in Stock (Nos)
+                                </td>
+                                <td style="width: 5%;">
+                                    Quantity
+                                </td>
+                                <td class="lotColumns" style="width: 9%;">
+                                    Lot Name
+                                </td>
+                                <td class="lotColumns">
+                                    LotWise Qty
+                                </td>
+                                <td class="lotColumns" style="width: 9%;">
+                                    LotWise Delivery
+                                </td>
+                                <td style="width: 8%;">
+                                    Unit Price
+                                </td>
+                                <td style="width: 9%;">
+                                    Total Price
+                                </td>
+                                <td style="width: 10%;">
+                                    Discount
+                                </td>
+                                <td style="width: 10%;">
+                                    Final Price
+                                </td>
+                                <td hidden>
+                                    Desc1
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <table class="table tableRadio" id="tableBOI">
+                        <thead>
+                            <tr>
+                                <td>
+                                    SN
+                                </td>
+                                <td>
+                                    RM Description
+                                </td>
+                                <td>
+                                    RM Grade
+                                </td>
+                                <td>
+                                    PS Level
+                                </td>
+                                <td>
+                                    Qty Required (Nos)
+                                </td>
+                                <td>
+                                    Qty in Stock (Nos)
+                                </td>
+                                <td>
+                                    Purchase Qty (Nos)
+                                </td>
+                                <td>
+                                    Unit Price
+                                </td>
+                                <td>
+                                    Total Price
+                                </td>
+                                <td>
+                                    HSN
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <table class="table tableRadio" id="tableJW">
+                        <thead>
+                            <tr>
+                                <td>
+                                    SN
+                                </td>
+                                @*<td>
+                                        RM Code
+                                    </td>*@
+                                <td>
+                                    Item Description
+                                </td>
+                                <td>
+                                    RM Grade
+                                </td>
+                                <td>
+                                    JW Qty (Nos)
+                                </td>
+                                <td>
+                                    Unit Price
+                                </td>
+                                <td>
+                                    Total Price
+                                </td>
+                                <td>
+                                    WIP No
+                                </td>
+                                <td>
+                                    DRG No
+                                </td>
+                                <td>
+                                    Opn Code
+                                </td>
+                                <td>
+                                    Process Name
+                                </td>
+                                <td>
+                                    EDR
+                                </td>
+                                <td>
+                                    OPN Time
+                                </td>
+                                <td>
+                                    HSN
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="tableRadio" id="tableGI" style="width: 70%;">
+                        <thead>
+                            <tr>
+                                <td style="width: 6%;">
+                                    SN
+                                </td>
+                                <td style="width: 36%;">
+                                    Item Description
+                                </td>
+                                <td style="width: 8%;">
+                                    Qty (Nos)
+                                </td>
+                                <td style="width: 10%;">
+                                    Unit Price
+                                </td>
+                                <td style="width: 11%;">
+                                    Total Price
+                                </td>
+                                @*<td width="16%">
+                                        Required Dly. Date
+                                    </td>*@
+                                <td style="width: 5%;">
+                                    HSN
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="tableRadio" id="tableC" style="width: 70%;">
+                        <thead>
+                            <tr>
+                                <td style="width: 6%;">
+                                    SN
+                                </td>
+                                <td style="width: 36%;">
+                                    Item Description
+                                </td>
+                                <td style="width: 8%;">
+                                    Qty (Nos)
+                                </td>
+                                <td style="width: 10%;">
+                                    Unit Price
+                                </td>
+                                <td style="width: 11%;">
+                                    Total Price
+                                </td>
+                                @*<td width="16%">
+                                        Required Dly. Date
+                                    </td>*@
+                                <td style="width: 5%;">
+                                    HSN
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="tableRadio" id="tableO" style="width: 70%;">
+                        <thead>
+                            <tr>
+                                <td style="width: 6%;">
+                                    SN
+                                </td>
+                                <td style="width: 36%;">
+                                    Item Description
+                                </td>
+                                <td style="width: 8%;">
+                                    Qty (Nos)
+                                </td>
+                                <td style="width: 10%;">
+                                    Unit Price
+                                </td>
+                                <td style="width: 11%;">
+                                    Total Price
+                                </td>
+                                @*<td width="16%">
+                                        Required Dly. Date
+                                    </td>*@
+                                <td style="width: 5%;">
+                                    HSN
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <hr style="width:100%" />
+            </div>
+
+            <table class="table">
+                <tr>
+                    <td class="text-right">
+                        General Condition
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.GeneralCondition, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsGeneralCondition",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                    <td class="text-right">
+                        Cost Centre
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.CostCenter, new SelectList(@ViewBag.ListCostCenter, "DataStringValueField", "DataTextField", "Select"), new
+                                {
+                                    @class = "form-control ml-2 requiredValidation clearField",
+                                    @id = "PODetailsCostCenter",
+                                    @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                                })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                </tr>
+                <tr>                    
+                    <td class="text-right">
+                        QMS Requirements
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.POQMSRequirement, new
+                        {
+                           @class = "form-control requiredValidation",
+                           @id = "PODetailsPOQMSRequirement",
+                           @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                    <td class="text-right">
+                        Packing & Forwarding
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.POPackForward, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsPOPackForward",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        Quality
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.POQuality, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsPOQuality",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                    <td class="text-right">
+                        PO Validity
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.POValidity, new
+                        {
+                            @class = "form-control requiredValidation NoEndDate",
+                            @readonly = "true",
+                            @id = "PODetailsPOValidity",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        Mode of Payment
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.ModeOfPayment, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsModeOfPayment",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                    <td class="text-right">
+                        Item Category
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.ItemCategory, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsItemCategory",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        Payment Terms
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.PaymentTerms, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsPaymentTerms",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                    <td class="text-right">
+                        Mode of Transport
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.ModeOfTransport, new SelectList(@ViewBag.ListModeOfTransport, "DataStringValueField", "DataTextField", "Select"), new
+                                {
+                                    @class = "form-control ml-2 requiredValidation clearField",
+                                    @id = "PODetailsModeOfTransport",
+                                    @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                                })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        Any Other Requirements
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.AnyOtherRequirements, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsAnyOtherRequirements",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                    <td class="text-right">
+                        Work Instruction
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.WorkNo, new
+                        {
+                            @class = "form-control requiredValidation",
+                            @id = "PODetailsWorkNo",
+                            @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)"
+                        })
+                        <label class="HideValidMsg">Fields is Required *</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        Delivery Date
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.DeliveryDate, new
+                        {
+                           @class = "form-control NoEndDate",
+                           @id = "PODetailsDeliveryDate",
+                           @readonly = "readonly"
+                        })
+                    </td>
+                    <td class="text-right">
+                        Supply Type
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.SupplyType, new SelectList(@ViewBag.ListSupplyType, "DataStringValueField", "DataTextField", "Select"), new
+                                {
+                                    @class = "form-control ml-2 requiredValidation",
+                                    @id = "PODetailsSupplyType",
+                                    @onfocusout = "return ValidateRequiredFieldsOnFocusOut(this)",
+                                    @onchange = "FetchtPRDetailsFromPRSetNo()"
+                                })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center">
+                        <img id="imgRequestedBy" src="" alt="Signature" width="50px" height="50px" />
+                    </td>
+                    <td class="text-center">
+                        <img id="imgStoreEx" src="" alt="Signature" width="50px" height="50px" />
+                    </td>
+                    <td class="text-center">
+                        <img id="imgApproverSign" src="" alt="Signature" width="50px" height="50px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center">
+                        <label id="lblRequestedBy">Purchase Department</label>
+                    </td>
+                    <td class="text-center">
+                        <label id="lblStoreEx">Plant Head</label>
+                    </td>
+                    <td class="text-center">
+                        <label id="lblApproverSign">Management</label>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="row">
+                <div class="col-md-12 pt-4 text-center">
+                    <button id="SavePODetails" style="font-size:18px" type="button" class="btn btn-success btn-sm save_results" onclick="SaveDetailsForPO(event)">Save</button>
+                    <button style="font-size:18px" type="button" class="btn btn-secondary btn-sm cancel_results" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        window.UpdateApproveReject = '@Url.Action("UpdateApproveReject", "MRM")';
+        window.ChangeEndUseNoForQuoteOrSoNo = '@Url.Action("ChangeEndUseNoForQuoteOrSoNo", "MRM")';
+        window.ChangeEndUseNoForNonPO = '@Url.Action("ChangeEndUseNoForNonPO", "MRM")';
+        window.ChangeRMCat = '@Url.Action("ChangeRMCat", "MRM")';
+
+        $('#tableRM').hide();
+        $('#tableBOI').hide();
+        $('#tableJW').hide();
+        $('#tableGI').hide();
+        $('#tableC').hide();
+        $('#tableO').hide();
+
+        //$('#lotDiv').hide();
+    });
+
+    //$("#addNew").click(function (e) {
+    //    e.preventDefault();
+    //    var $tableBody = $("#lotTable");
+    //    var $trLast = $tableBody.find("tr:last");
+    //    var $trNew = $trLast.clone();
+
+    //    var suffix = $trNew.find(':input:first').attr('name').match(/\d+/);
+
+    //    $trNew.find("#SN").attr('class', 'requiredValidation forSingle form-control');
+    //    $trNew.find("#LotName").attr('class', 'requiredValidation forSingle form-control');
+    //    $trNew.find("#LotDate").attr('class', 'form-control NoEndDate forSingle requiredValidation');
+    //    $trNew.find("#LotQty").attr('class', 'requiredValidation forSingle form-control');
+
+    //    $trNew.find("td:last").html('<a href="#" class="remove">Remove</a>');
+    //    $.each($trNew.find(':input'), function (i, val) {
+    //        // Replaced Name
+    //        var oldN = $(this).attr('name');
+    //        var newN = oldN.replace('[' + suffix + ']', '[' + (parseInt(suffix) + 1) + ']');
+    //        $(this).attr('name', newN);
+    //        //Replaced value
+    //        var type = $(this).attr('type');
+    //        if (type!=undefined && type.toLowerCase() == "text") {
+    //            $(this).attr('value', '');
+    //        }
+
+    //        // If you have another Type then replace with default value
+    //        $(this).removeClass("input-validation-error");
+    //        //$(this).addClass("requiredValidation");
+
+    //    });
+    //    $trLast.after($trNew);
+
+    //// 2. Remove
+    //            $('.remove').on("click", function (e) {
+    //                e.preventDefault();
+    //                $(this).parent().parent().remove();
+    //            });
+
+    //   $('.NoEndDate').datepicker({
+    //    format: 'dd-mm-yyyy',
+    //    autoclose: true,
+    //    changeMonth: true,
+    //    changeYear: true,
+    //    endDate: '',
+    //    });
+    //});
+
+    //LEASE DATE AND EXP LEASE DATE VALIDATION
+    $('.NoEndDate').datepicker({
+
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        changeMonth: true,
+        changeYear: true,
+        endDate: '',
+    });
+
+    $('.CalenderTillTodayDate').datepicker({
+
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        changeMonth: true,
+        changeYear: true,
+        endDate: 'today',
+    });
+</script>
+
+

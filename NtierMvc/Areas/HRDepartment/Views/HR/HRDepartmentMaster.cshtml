@@ -1,0 +1,47 @@
+﻿@using NtierMvc.Model
+@using NtierMvc.Infrastructure
+
+@{
+    ViewBag.Title = "HRMaster";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+<link href="~/assets/css/tableStyle.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+<script src="~/Scripts/tabs.js"></script>
+
+<div ng-controller="HrController">
+    <div class="tab">
+        @if (LocalUtility.CheckUrlForPermission("HRDepartment", "HR", "HRDepartmentMaster", "HrEmpMaster"))
+        {
+            <button class="tablinks" onclick="openCity(event, 'HrEmpMaster')" id="defaultOpen" ng-click="FetchHREmpList()">Employee Master</button>
+        }
+        @if (LocalUtility.CheckUrlForPermission("HRDepartment", "HR", "HRDepartmentMaster", "Payroll"))
+        {
+            <button class="tablinks" onclick="openCity(event, 'HrPayroll')" ng-click="BindPayroll()">Payroll</button>
+        }
+        <button class="tablinks" onclick="openCity(event, 'HrPayroll')" ng-click="BindLeaveManagement()">Leave Management</button>
+
+    </div>
+
+    <!-- Tab content -->
+    <div id="HrEmpMaster" class="tabcontent">
+        @Html.Partial("HrEmpMaster")
+    </div>
+
+    <div id="HrPayroll" class="tabcontent">
+        @Html.Partial("HrPayroll")
+    </div>
+</div>
+
+<script>
+    document.getElementById("defaultOpen").click();
+
+    $(document).ready(function () {
+        window.PayrollTab = '@Url.Action("PartialHRPayroll", "Hr")';
+        window.LeaveManagementTab = '@Url.Action("PartialLeaveManagement", "Hr")';
+        window.FetchEmployeeList = '@Url.Action("FetchEmployeeList", "Hr")';
+        window.DeleteEmployeeDetail = '@Url.Action("DeleteEmployeeDetail", "Hr")';
+
+    });
+</script>

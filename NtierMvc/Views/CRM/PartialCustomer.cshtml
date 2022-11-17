@@ -1,0 +1,423 @@
+﻿@using NtierMvc.Model
+@using NtierMvc.Infrastructure
+
+@model NtierMvc.Model.Customer.CustomerEntityDetails
+@{
+    ViewBag.Title = "Customer";
+}
+
+<div id="MainController" class="row mt-3">
+    <table>
+        <tr>
+            <td>
+                @if (LocalUtility.CheckForWrite("", "CRM", "CRMMaster", "Customer") == GeneralConstants.Write)
+                {
+                    <button id="btnAdd" type="button" class="btn btn-outline-primary btn-sm" style="float: left;" ng-click="BindCustomerPopup()"><i class="fa fa-plus"></i> <b>Add New Customer</b></button>
+                }
+            </td>
+            <td>
+                <label>Status</label>
+            </td>
+            <td>
+                <label>Country</label>
+            </td>
+            <td>
+                <label>Customer ID</label>
+            </td>
+            <td>
+                <label>Customer Name</label>
+            </td>
+            @*    <td>
+            <label>Quote Type</label>
+        </td>*@
+        </tr>
+        <tr>
+            <td></td>
+            @*<td>
+                    @Html.DropDownList("VendorType", new SelectList(@ViewBag.ListVendorType, "DataStringValueField", "DataTextField", "Select"),
+                               new
+                               {
+                                   @class = "form-control",
+                                   ng_model = "SearchCustVendorType",
+                                   @id = "CUVendorType"
+                               })
+                </td>*@
+            <td>
+                @Html.DropDownList("CustStatus", new SelectList(@ViewBag.ListCustStatus, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               ng_model = "SearchCustomerIsActive",
+                               @id = "CUCustStatus"
+                           })
+            </td>
+            <td>
+                @Html.DropDownList("Country", new SelectList(@ViewBag.ListCountry, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               ng_model = "SearchCountry",
+                               @id = "CUCountryId",
+                               autocomplete = "off",
+                               @multiple = "true"
+                           })
+            </td>
+            <td>
+                @Html.DropDownList("CustomerId", new SelectList(@ViewBag.ListCustomerId, "DataStringValueField", "DataTextField", "Select"),
+                           new
+                           {
+                               @class = "form-control",
+                               ng_model = "SearchCustomerID",
+                               @id = "CUCustomerId",
+                               autocomplete = "off",
+                               @multiple = "true"
+                           })
+            </td>
+            <td>
+                @Html.DropDownList("CustomerName", new SelectList(@ViewBag.ListCustomerName, "DataStringValueField", "DataTextField", "Select"),
+                          new
+                          {
+                              @class = "form-control",
+                              ng_model = "SearchCustomerName",
+                              @id = "CUCustomerName",
+                              autocomplete = "off",
+                              @multiple = "true"
+                          })
+                <button class="btn btn-sm btn-success" type="button" id="btnSearchCustomer" ng-click="FetchCustomerList()">
+                    Search
+                </button>
+                <button class="btn btn-sm btn-info" type="button" id="btnClearSearchCustomer" ng-click="DefaultCustomerList(); FetchCustomerList();">Clear</button>
+                <button class="btn btn-sm btn-info" type="button" id="btnDownloadReport" ng-click="GenerateReport('CUSTOMER');">Customer Master<i class="fa fa-download" style="font-size:16px" aria-hidden="true"></i></button>
+
+              
+            </td>
+            @*<td>
+                        @Html.DropDownList("CountryId", new SelectList(@ViewBag.ListCountry, "DataStringValueField", "DataTextField", "Select"),
+                                   new
+                                   {
+                                       @class = "form-control",
+                                       ng_model = "SearchCustCountry",
+                                       @id = "CUCountry"
+                                   })
+                    </td>
+                    <td>
+                    @Html.DropDownList("QuoteType", new SelectList(@ViewBag.ListQuoteType, "DataStringValueField", "DataTextField", "Select"),
+                               new
+                               {
+                                   @class = "form-control",
+                                   ng_model = "SearchQuoteType",
+                                   @id = "CUQuoteType",
+                                   @multiple = "true"
+                               })
+                </td>*@
+            <td>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="wrapper">
+    <div class="container">
+        <table id="TblCustomer" class="table table-sm">
+            <thead style="font-weight: bold">
+                <tr>
+                    <td>
+                        Action
+                    </td>
+                    <td>
+                        Customer Id
+                    </td>
+                    <td>
+                        Customer Name
+                    </td>
+                    <td>
+                        Country
+                    </td>
+                    <td>
+                        Contact Person
+                    </td>
+                    <td>
+                        Designation
+                    </td>
+                    <td>
+                        Mobile
+                    </td>
+                    <td>
+                        Status
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="L in AvailableCustomerList">
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="VIEW" ng-click="LoadCustomerViewPopup(L.Id)">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        @if (LocalUtility.CheckForWrite("", "CRM", "CRMMaster", "Customer") == GeneralConstants.Write)
+                        {
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="EDIT" ng-click="LoadCustomerEditPopup(L.Id)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="DELETE" ng-click="DeleteCustomer(L.Id)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        }
+                    </td>
+                    <td>
+                        {{L.CustomerId}}
+                    </td>
+                    <td>
+                        {{L.CustomerName}}
+                    </td>
+                    <td>
+                        {{L.Country}}
+                    </td>
+                    <td>
+                        {{L.ContactPerson}}
+                    </td>
+                    <td>
+                        {{L.Designation}}
+                    </td>
+                    @*<td>
+        {{L.State}}
+        </td>
+        <td>
+            {{L.email1}}
+        </td>*@
+                    <td>
+                        {{L.mob1}}
+                    </td>
+                    <td>
+                        {{L.Status}}
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <div class="c1">
+                            <div class="row p-0">
+                                <div class="col-md-2 p-0">
+                                    <span class="form-group pull-left page-size form-inline">
+                                        <b>Records per page : &nbsp;&nbsp;</b>
+                                        <select id="ddlCustPageSize" class="form-control control-color"
+                                                ng-model="custPageSize"
+                                                ng-change="CustChangePageSize()">
+                                            <option value="100000">All</option>
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="col-md-8 pull-right p-0">
+                                    <div class="row p-0">
+                                        <div class="col-md-10 p-0">
+                                            <pagination total-items="custTotalCount" ng-change="CustPageChanged()" items-per-page="custPageSize" direction-links="true" ng-model="custPageIndex" max-size="maxsize" class="pagination pull-right" boundary-links="true" rotate="false" num-pages="custNumPages"></pagination>
+                                        </div>
+                                        <div class="col-md-2 p-0">
+                                            <a class="btn btn-primary p-2 pull-right">Page: {{custPageIndex}} / {{custNumPages}}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        setTimeout(function () {
+            angular.element(document.getElementById('TblCustomer')).scope().DefaultCustomerList();
+            angular.element(document.getElementById('TblCustomer')).scope().FetchCustomerList();
+        }, 500);
+
+        window.GetCustomerListForCusts = '@Url.Action("GetCustomerListForCust","CRM")';
+        window.GetDdlValueForCustomer = '@Url.Action("GetDdlValueForCustomer", "CRM")';
+        window.GenerateReport = '@Url.Action("CreateReport", "CRM")';
+         window.DownloadDoc = '@Url.Action("Download", "CRM")';
+
+        $('#CUCustStatus').chosen({
+            width: "150px",
+            placeholder_text_single: "Select Status",
+            placeholder_text_multiple: "Select Status"
+        });
+
+        $('#CUCustomerId').chosen({
+            width: "150px",
+            placeholder_text_single: "Select CustomerId",
+            placeholder_text_multiple: "Select CustomerIds"
+        });
+
+        $('#CUCustomerName').chosen({
+            width: "210px",
+            placeholder_text_single: "Select CustomerName"
+        });
+
+        $('#CUCountryId').chosen({
+            width: "180px",
+            placeholder_text_single: "Select Country",
+            placeholder_text_multiple: "Select Countries"
+        });
+
+        //$('#CUQuoteType').chosen({
+        //    width: "120px",
+        //    placeholder_text_single: "Select QuoteType"
+        //});
+
+        $("#CUCountryId").chosen().change(
+            function GetCustomerId() {
+
+                var CountryId = '';
+                var x = document.getElementById("CUCountryId");
+                for (var i = 0; i < x.options.length; i++) {
+                    if (x.options[i].selected == true) {
+                        //alert(x.options[i].value);
+                        CountryId = CountryId + x.options[i].value + ',';
+                    }
+                }
+
+                CountryId = CountryId.substring(0, CountryId.length - 1);
+
+                return $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'GET',
+                    url: window.GetDdlValueForCustomer,
+                    data: { type: 'CountryId', CountryId: CountryId, CustomerId: '' },
+                    success: function (res) {
+                        if (res.length > 0) {
+                            $("#CUCustomerId").empty();
+                            $.each(res, function (i, item) {
+                                $("#CUCustomerId").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                                $("#CUCustomerId").trigger("chosen:updated");
+                            })
+                        }
+                    },
+                    error: function (res) {
+                        alert(res);
+                    }
+                });
+            }
+        )
+
+
+        $("#CUCustomerId").chosen().change(
+            function GetFunctionalArea() {
+                //var CustomerNameId = $('#CUCustomerId').val();
+                var CustomerId = '';
+                var x = document.getElementById("CUCustomerId");
+                for (var i = 0; i < x.options.length; i++) {
+                    if (x.options[i].selected == true) {
+                        //alert(x.options[i].value);
+                        CustomerId = CustomerId + x.options[i].value + ',';
+                    }
+                }
+
+                CustomerId = CustomerId.substring(0, CustomerId.length - 1);
+
+                return $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    type: 'GET',
+                    url: window.GetDdlValueForCustomer,
+                    data: { type: 'CustomerName', CountryId: '', CustomerId: CustomerId },
+                    success: function (res) {
+                        if (res.length > 0) {
+                            $("#CUCustomerName").empty();
+                            $.each(res, function (i, item) {
+                                $("#CUCustomerName").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                                $("#CUCustomerName").trigger("chosen:updated");
+                            })
+                        }
+                    },
+                    error: function (res) {
+                        alert(res);
+                    }
+                });
+            }
+        )
+
+
+    });
+
+    //COMPARING MOBILE NUMBER AND ALTERNATIVE MOBILE NUMBER
+    var alterMobileNumber = $('#altrmobileNumber');
+    alterMobileNumber.on('blur', function () {
+        $('#sameMobileNumber').hide();
+        if ($('#mobileNumber').val() == '') {
+        }
+        else {
+            if (alterMobileNumber.val() == $('#mobileNumber').val()) {
+                $('#sameMobileNumber').show();
+                alterMobileNumber.val('');
+            }
+        }
+    });
+
+    $(document).on("blur", ".check_mobileNumber", function () {
+        validateMobileNumberforFirst($(this));
+    })
+
+    function validateMobileNumberforFirst(e) {
+        var mobileNumber = $(e).val();
+        var one1 = String(mobileNumber).charAt(0);
+        var one_as_number1 = Number(one1);
+        if (one1 != "") {
+            if (one_as_number1 < 6) {
+                //$("#spn-Sucess-Failure").text('Mobile Number should start with 7 or 8 or 9')
+                //$("#Sucess-Failure").modal('show');
+                alertNotification('Please Enter valid Mobile Number');
+                $(e).val('');
+            }
+        }
+    }
+
+    function GetVendorListForCust() {
+        let VendorNature = $('#VendorNatureId').val();
+
+        $.ajax({
+            type: 'GET',
+            url: window.GetVendorListForCusts,
+            dataType: 'JSON',
+            data: { VendorNatureId: VendorNature },
+            contentType: 'application/json; charset=utf-8',
+            success: function (res) {
+                if (res.length > 0) {
+                    $("#CustomerId").empty();
+                    $.each(res, function (i, item) {
+                        $("#CustomerId").append($('<option></option>').val(item.DataStringValueField).html(item.DataTextField));
+                    })
+                }
+            },
+            error: function (res) {
+                alertNotification('Some Error Occurred. Please try later.');
+            }
+        })
+    }
+
+    $('#btnClearSearchCustomer').click(
+        function ClearFields() {
+
+            $('#CUCountryId').val([]).trigger('chosen:updated');
+            $('#CUCustomerId').val([]).trigger('chosen:updated');
+            $('#CUCustomerName').val([]).trigger('chosen:updated');
+            //$('#POSearchDeliveryDateFrom').val('');
+            //$('#POSearchDeliveryDateTo').val('');
+
+        }
+    );
+
+
+</script>
+
+

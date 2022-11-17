@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewBag.Title = "DesignEng";
+    Layout = "~/Views/Shared/_LayoutMaster.cshtml";
+}
+
+<link href="~/assets/css/tableStyle.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+<script src="~/Scripts/tabs.js"></script>
+
+<div ng-controller="DesignEngController">
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'ProductRealisation')" id="defaultOpen" ng-click="FetchProductRealisationList()"> Product Realisation </button>
+        <button class="tablinks" onclick="openCity(event, 'BillMonitoring')" ng-click="FetchBillMonitoringList()">Bill Monitoring</button>
+        <button class="tablinks" onclick="openCity(event, 'Reports')" ng-click="BindReportsPopup()">Reports</button>
+    </div>
+
+    <!-- Tab content -->
+    <div id="ProductRealisation" class="tabcontent">
+        @Html.Partial("PartialProductRealisation")
+    </div>
+
+    <div id="BillMonitoring" class="tabcontent">
+        @Html.Partial("PartialBillMonitoring")
+    </div>
+
+    <div id="Reports" class="tabcontent">
+        @Html.Partial("PartialReports")
+    </div>
+</div>
+
+<script>
+    document.getElementById("defaultOpen").click();
+
+    $(document).ready(function () {
+        @*window.LeaveManagementTab = '@Url.Action("PartialLeaveManagement", "Hr")';*@
+    });
+</script>
